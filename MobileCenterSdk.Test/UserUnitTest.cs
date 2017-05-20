@@ -10,8 +10,8 @@ namespace MobileCenterSdk.Test
     [TestClass]
     public class UserUnitTest : UnitTestBase
     {
-        private McUser _user = null;
-        public async Task<McUser> GetUserAsync()
+        private McCurrentUser _user = null;
+        public async Task<McCurrentUser> GetUserAsync()
         {
             return _user ?? (_user = await Client.AccountService.GetUserAsync());
         }
@@ -80,7 +80,7 @@ namespace MobileCenterSdk.Test
             Assert.IsTrue(PropertiesSetCheck.Check(token));
 
             //cleanup
-            await Client.AccountService.DeleteApiTokenAsync(token.Id);
+            await token.DeleteAsync();
         }
         [TestMethod]
         public async Task DeleteApiToken_IsSuccessful_ShouldBeTrue()
@@ -91,7 +91,7 @@ namespace MobileCenterSdk.Test
                     Description = "TokenCeatedByUnitTest",
                     Scope = new List<string>() { "all" }
                 });
-            await Client.AccountService.DeleteApiTokenAsync(token.Id);
+            await token.DeleteAsync();
         }
     }
 }

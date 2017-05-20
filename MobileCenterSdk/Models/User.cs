@@ -10,52 +10,68 @@ using System.Threading.Tasks;
 
 namespace MobileCenterSdk.Models
 {
-    public class McUser : McSlimUser, IAccountServiceHolder
+    public class McCurrentUser : McUser, IAccountServiceHolder
     {
+        internal McCurrentUser() { }
         [JsonIgnore]
         AccountService IAccountServiceHolder.AccountService { get; set; }
 
 
-        [JsonProperty(PropertyName = "permissions")]
-        public List<string> Permissions { get; set; } = new List<string>();
-
-        [JsonProperty(PropertyName = "created_at")]
-        public DateTime CreatedAt { get; set; }
-
-
         public async Task<McUser> UpdateProfileAsync(string displayName, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CheckAccountService();
             var userWithDisplayName = new McUserWithDisplayName() { DisplayName = displayName };
             return await (this as IAccountServiceHolder).AccountService.UpdateUserAsync(userWithDisplayName, cancellationToken);
         }
         public async Task AcceptOrganizationInvitationAsync(string invitationToken, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CheckAccountService();
             await (this as IAccountServiceHolder).AccountService.AcceptOrganizationInvitationAsync(invitationToken, cancellationToken);
         }
         public async Task RejectOrganizationInvitationAsync(string invitationToken, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CheckAccountService();
             await (this as IAccountServiceHolder).AccountService.RejectOrganizationInvitationAsync(invitationToken, cancellationToken);
         }
         public async Task AcceptAppInvitationAsync(string invitationToken, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CheckAccountService();
             await (this as IAccountServiceHolder).AccountService.AcceptAppInvitationAsync(invitationToken, cancellationToken);
         }
         public async Task RejectAppInvitationAsync(string invitationToken, CancellationToken cancellationToken = default(CancellationToken))
         {
-            CheckAccountService();
             await (this as IAccountServiceHolder).AccountService.RejectAppInvitationAsync(invitationToken, cancellationToken);
         }
-        private void CheckAccountService()
+    }
+    public class McAppUser : McUser, IAccountServiceHolder, IAppDataHolder
+    {
+        internal McAppUser() { }
+        [JsonIgnore]
+        AccountService IAccountServiceHolder.AccountService { get; set; }
+
+        [JsonIgnore]
+        string IAppDataHolder.AppName { get; set; }
+
+        [JsonIgnore]
+        string IAppDataHolder.AppOwnerName { get; set; }
+
+        public async Task UpdateAsync(McPermissionData permissions, CancellationToken cancellationToken = default(CancellationToken))
         {
-            if((this as IAccountServiceHolder).AccountService == null)
-            {
-                throw new UnauthorizedAccessException("Method can only be called on instances created by the SDK.");
-            }
+            await (this as IAccountServiceHolder).AccountService.UpdateAppUser(DataHolder().AppOwnerName, DataHolder().AppName, Email, permissions, cancellationToken);
         }
+        public async Task DeleteAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            await (this as IAccountServiceHolder).AccountService.DeleteAppUser(DataHolder().AppOwnerName, DataHolder().AppName, Email, cancellationToken);
+        }
+        private IAppDataHolder DataHolder()
+        {
+            return this as IAppDataHolder;
+        }
+    }
+    public class McUser : McSlimUser
+    {
+        [JsonProperty(PropertyName = "permissions")]
+        public List<string> Permissions { get; set; } = new List<string>();
+
+        [JsonProperty(PropertyName = "created_at")]
+        public DateTime CreatedAt { get; set; }
+        
     }
     public class McSlimUser : McUserBase
     {
@@ -75,6 +91,7 @@ namespace MobileCenterSdk.Models
     }
     public class McOrganizationUser : McUserBase, IUserWithRole, IAccountServiceHolder
     {
+        internal McOrganizationUser() { }
         [JsonIgnore]
         AccountService IAccountServiceHolder.AccountService { get; set; }
 
@@ -120,9 +137,9 @@ namespace MobileCenterSdk.Models
 
         [JsonProperty(PropertyName = "type")]
         [JsonConverter(typeof(OwnerTypeConverter))]
-        public OwnerType OwnerType { get; set; }
+        public McOwnerType OwnerType { get; set; }
     }
-    public enum OwnerType
+    public enum McOwnerType
     {
         Organization,
         User

@@ -23,16 +23,11 @@ namespace MobileCenterSdk.Models
         public string Id { get; set; }
 
         [JsonIgnore]
-        public RepoState StateType
+        public McRepoState StateType
         {
             get { return StringToRepoStateTypeConverter.Convert(State); }
             set { State = StringToRepoStateTypeConverter.ConvertBack(value); }
         }
-    }
-    public class McSuccessMessage
-    {
-        [JsonProperty(PropertyName = "message")]
-        public string Message { get; set; }
     }
     public class McRepositoryInfo
     {
@@ -81,14 +76,14 @@ namespace MobileCenterSdk.Models
     }
 
 
-    public enum RepoState
+    public enum McRepoState
     {
         Unauthorized,
         Inactive,
         Active,
         Unknown
     }
-    public enum SourceHost
+    public enum McSourceHost
     {
         GitHub,
         Bitbucket,

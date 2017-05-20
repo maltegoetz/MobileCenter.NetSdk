@@ -17,11 +17,11 @@ namespace MobileCenterSdk.Services
         /// Get the user profile data for the authenticated user as an <see cref="McUser"/> object asynchronously.
         /// </summary>
         /// <param name="cancellationToken">CancellationToken to cancel the request</param>
-        /// <returns>Returns a <see cref="McUser"/> object with the profile data</returns>
-        public async Task<McUser> GetUserAsync(CancellationToken cancellationToken = default(CancellationToken))
+        /// <returns>Returns a <see cref="McCurrentUser"/> object with the profile data</returns>
+        public async Task<McCurrentUser> GetUserAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(ApiSettings.UserEndpoint, HttpMethod.Get);
-            return await SendRequest<McUser>(request, cancellationToken);
+            return await SendRequest<McCurrentUser>(request, cancellationToken);
         }
 
         /// <summary>
@@ -29,11 +29,11 @@ namespace MobileCenterSdk.Services
         /// </summary>
         /// <param name="user">The user data that should be updated</param>
         /// <param name="cancellationToken">CancellationToken to cancel the request</param>
-        /// <returns>Returns a <see cref="McUser"/> object with the changed profile data</returns>
-        public async Task<McUser> UpdateUserAsync(McUserWithDisplayName user, CancellationToken cancellationToken = default(CancellationToken))
+        /// <returns>Returns a <see cref="McCurrentUser"/> object with the changed profile data</returns>
+        public async Task<McCurrentUser> UpdateUserAsync(McUserWithDisplayName user, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(ApiSettings.UserEndpoint, ApiSettings.HttpMethodPatch, body: user);
-            return await SendRequest<McUser>(request, cancellationToken);
+            return await SendRequest<McCurrentUser>(request, cancellationToken);
         }
 
         /// <summary>
@@ -92,7 +92,14 @@ namespace MobileCenterSdk.Services
         }
         private McOrganizationUser AddOrganizationNameToUser(McOrganizationUser user, string organizationName)
         {
+            if (user == null)
+                return null;
             user.OrganizationName = organizationName;
+            if(user is IAccountServiceHolder)
+            {
+                if ((user as IAccountServiceHolder).AccountService == null)
+                    (user as IAccountServiceHolder).AccountService = this;
+            }
             return user;
         }
         public async Task InviteUserToOrganizationAsync(string organizationName, string email, CancellationToken cancellationToken = default(CancellationToken))
@@ -108,7 +115,20 @@ namespace MobileCenterSdk.Services
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.OrganizationUserInvitationEndpoint, organizationName),
                 HttpMethod.Get);
-            return await SendRequest<List<McOrganizationInvitation>>(request, cancellationToken);
+            var invitations = await SendRequest<List<McOrganizationInvitation>>(request, cancellationToken);
+            return invitations.Select(invite => AddOrganizationNameToInvite(invite, organizationName)).ToList();
+        }
+        private McOrganizationInvitation AddOrganizationNameToInvite(McOrganizationInvitation invite, string organizationName)
+        {
+            if (invite == null)
+                return null;
+            invite.OrganizationName = organizationName;
+            if (invite is IAccountServiceHolder)
+            {
+                if ((invite as IAccountServiceHolder).AccountService == null)
+                    (invite as IAccountServiceHolder).AccountService = this;
+            }
+            return invite;
         }
         public async Task RemoveInvitationToOrganization(string organizationName, string email, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -223,7 +243,8 @@ namespace MobileCenterSdk.Services
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.AppDistributionGroupsEndpoint, ownerName, appName),
                 HttpMethod.Get);
-            return await SendRequest<List<McDistributionGroup>>(request, cancellationToken);
+            var dgroups = await SendRequest<List<McDistributionGroup>>(request, cancellationToken);
+            return dgroups.Select(group => AddAppDataToT(group, ownerName, appName)).ToList();
         }
         public async Task<McDistributionGroup> CreateDistributionGroup(string ownerName, string appName, string distributionGroupName, CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -231,23 +252,24 @@ namespace MobileCenterSdk.Services
                 string.Format(ApiSettings.AppDistributionGroupsEndpoint, ownerName, appName),
                 HttpMethod.Post,
                 body: new McDistributionGroupBase() { Name = distributionGroupName });
-            return await SendRequest<McDistributionGroup>(request, cancellationToken);
+            return AddAppDataToT(await SendRequest<McDistributionGroup>(request, cancellationToken), ownerName, appName);
         }
-        public async Task<McDistributionGroup> UpdateDistributionGroup(string ownerName, string appName, string distributionGroupName, McDistributionGroupBase distributionGroup, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<McDistributionGroup> UpdateDistributionGroup(string ownerName, string appName, string distributionGroupName, string newName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.AppDistributionGroupEndpoint, ownerName, appName, distributionGroupName),
                 ApiSettings.HttpMethodPatch,
-                body: distributionGroup);
-            return await SendRequest<McDistributionGroup>(request, cancellationToken);
+                body: new McDistributionGroupBase() { Name = newName });
+            return AddAppDataToT(await SendRequest<McDistributionGroup>(request, cancellationToken), ownerName, appName);
         }
         public async Task<McDistributionGroup> GetDistributionGroup(string ownerName, string appName, string distributionGroupName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.AppDistributionGroupEndpoint, ownerName, appName, distributionGroupName),
                 HttpMethod.Get);
-            return await SendRequest<McDistributionGroup>(request, cancellationToken);
+            return AddAppDataToT(await SendRequest<McDistributionGroup>(request, cancellationToken), ownerName, appName);
         }
+
         public async Task DeleteDistributionGroup(string ownerName, string appName, string distributionGroupName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
@@ -291,8 +313,10 @@ namespace MobileCenterSdk.Services
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.AppInvitationsEndpoint, ownerName, appName),
                 HttpMethod.Get);
-            return await SendRequest<List<McAppInvitation>>(request, cancellationToken);
+            var invitations = await SendRequest<List<McAppInvitation>>(request, cancellationToken);
+            return invitations.Select(invite => AddAppDataToT(invite, ownerName, appName)).ToList();
         }
+
         public async Task UpdateAppInvitationPermissions(string ownerName, string appName, string userEmail, McPermissionData permissions, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
@@ -315,13 +339,15 @@ namespace MobileCenterSdk.Services
                 HttpMethod.Get);
             return await SendRequest<List<McUser>>(request, cancellationToken);
         }
-        public async Task<List<McUser>> GetAppUsers(string ownerName, string appName, CancellationToken cancellationToken = default(CancellationToken))
+        public async Task<List<McAppUser>> GetAppUsers(string ownerName, string appName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
                 string.Format(ApiSettings.AppUsersEndpoint, ownerName, appName),
                 HttpMethod.Get);
-            return await SendRequest<List<McUser>>(request, cancellationToken);
+            var users = await SendRequest<List<McAppUser>>(request, cancellationToken);
+            return users.Select(user => AddAppDataToT(user, ownerName, appName)).ToList();
         }
+
         public async Task UpdateAppUser(string ownerName, string appName, string userEmail, McPermissionData permissions, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(
@@ -336,6 +362,14 @@ namespace MobileCenterSdk.Services
                 string.Format(ApiSettings.AppUserEndpoint, ownerName, appName, userEmail),
                HttpMethod.Delete);
             await SendRequest(request, cancellationToken);
+        }
+
+        public async Task<McApp> TransferAppOwnership(string ownerName, string appName, string destinationOwnerName, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            var request = PrepareHttpRequest(
+                string.Format(ApiSettings.AppTransferEndpoint, ownerName, appName, destinationOwnerName),
+               HttpMethod.Post);
+            return await SendRequest<McApp>(request, cancellationToken);
         }
         #endregion
 
@@ -356,5 +390,18 @@ namespace MobileCenterSdk.Services
             return await SendRequest<McApiToken>(request, cancellationToken);
         }
         #endregion
+        private T AddAppDataToT<T>(T appInvite, string appOwnerName, string appName) where T : IAppDataHolder
+        {
+            if (appInvite == null)
+                return default(T);
+            appInvite.AppName = appName;
+            appInvite.AppOwnerName = appOwnerName;
+            if (appInvite is IAccountServiceHolder)
+            {
+                if ((appInvite as IAccountServiceHolder).AccountService == null)
+                    (appInvite as IAccountServiceHolder).AccountService = this;
+            }
+            return appInvite;
+        }
     }
 }

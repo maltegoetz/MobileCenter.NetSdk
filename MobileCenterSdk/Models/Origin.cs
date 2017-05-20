@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MobileCenterSdk.Models
 {
-    public enum Origin
+    public enum McOrigin
     {
         MobileCenter,
         HockeyApp,

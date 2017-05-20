@@ -13,29 +13,29 @@ namespace MobileCenterSdk.Utils
         private const string Bitbucket = "bitbucket";
         private const string Vsts = "vsts";
 
-        public static SourceHost Convert(string sourceHostString)
+        public static McSourceHost Convert(string sourceHostString)
         {
             switch(sourceHostString)
             {
                 case GitHub:
-                    return SourceHost.GitHub;
+                    return McSourceHost.GitHub;
                 case Bitbucket:
-                    return SourceHost.Bitbucket;
+                    return McSourceHost.Bitbucket;
                 case Vsts:
-                    return SourceHost.Vsts;
+                    return McSourceHost.Vsts;
                 default:
-                    return SourceHost.Unknown;
+                    return McSourceHost.Unknown;
             }
         }
-        public static string ConvertBack(SourceHost sourceHost)
+        public static string ConvertBack(McSourceHost sourceHost)
         {
             switch(sourceHost)
             {
-                case SourceHost.GitHub:
+                case McSourceHost.GitHub:
                     return GitHub;
-                case SourceHost.Bitbucket:
+                case McSourceHost.Bitbucket:
                     return Bitbucket;
-                case SourceHost.Vsts:
+                case McSourceHost.Vsts:
                     return Vsts;
                 default:
                     return string.Empty;

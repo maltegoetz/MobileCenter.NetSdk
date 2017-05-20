@@ -16,8 +16,8 @@ namespace MobileCenterSdk.Test
         public async Task GetBranches_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp(TestConfig.AppOsOfRepo, TestConfig.AppPlatformOfRepo);
-            await Client.BuildService.ConfigureRepoForBuild(app.Owner.Name, app.Name, TestConfig.Repository);
-            var branches = await Client.BuildService.GetBranchesAsync(app.Owner.Name, app.Name);
+            await app.ConfigureRespository(TestConfig.Repository);
+            var branches = await app.GetBranchesAsync();
 
             if (branches.Count < 1)
                 Assert.Fail();
@@ -25,7 +25,7 @@ namespace MobileCenterSdk.Test
             Assert.IsTrue(PropertiesSetCheck.Check(branches));
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
 
         [TestMethod]
@@ -33,20 +33,20 @@ namespace MobileCenterSdk.Test
         {
             var app = await CreateRandomApp(TestConfig.AppOsOfRepo, TestConfig.AppPlatformOfRepo);
             var sampleBranchStatus = await GetConfiguredSampleBranchAsync(app);
-            var build = await GetSampleBuild(app, sampleBranchStatus);
+            var build = await GetSampleBuild(sampleBranchStatus);
             Assert.IsTrue(PropertiesSetCheck.Check(build));
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetBuilds_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp(TestConfig.AppOsOfRepo, TestConfig.AppPlatformOfRepo);
             var sampleBranchStatus = await GetConfiguredSampleBranchAsync(app);
-            var build = await GetSampleBuild(app, sampleBranchStatus);
+            var build = await GetSampleBuild(sampleBranchStatus);
 
-            var builds = await Client.BuildService.GetBranchBuildsAsync(app.Owner.Name, app.Name, sampleBranchStatus.Branch.Name);
+            var builds = await sampleBranchStatus.Branch.GetBuildsAsync();
 
             if (builds.Count < 1)
                 Assert.Fail();
@@ -55,7 +55,7 @@ namespace MobileCenterSdk.Test
             Assert.IsTrue(PropertiesSetCheck.Check(builds));
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
 
         [TestMethod]
@@ -63,28 +63,27 @@ namespace MobileCenterSdk.Test
         {
             var app = await CreateRandomApp(TestConfig.AppOsOfRepo, TestConfig.AppPlatformOfRepo);
             var sampleBranchStatus = await GetConfiguredSampleBranchAsync(app);
-            var build = await GetSampleBuild(app, sampleBranchStatus);
-            var branch = (await GetBranchesAsync(app)).First();
-            var configInfo = await GetToolsetProjectsAsync(app, branch);
+            var build = await GetSampleBuild(sampleBranchStatus);
+            var branchStatus = (await app.GetBranchesAsync()).First();
+            var configInfo = await GetToolsetProjectsAsync(app, branchStatus);
             var sampleConfig = SampleToolsetProjectConfig(configInfo);
-            await Client.BuildService.ConfigureBranchAsync(app.Owner.Name, app.Name, branch.Branch.Name, sampleConfig);
+            await branchStatus.Branch.ConfigureForBuildAsync(sampleConfig);
 
-            var config = await Client.BuildService.GetBranchConfigurationAsync(app.Owner.Name, app.Name, branch.Branch.Name);
+            var config = await branchStatus.Branch.GetConfigurationAsync();
 
             var isSlnPathCorrect = config.Toolsets.Xamarin.SlnPath == sampleConfig.Toolsets.Xamarin.SolutionPath;
             var isSimBuildCorrect = config.Toolsets.Xamarin.IsSimBuild == sampleConfig.Toolsets.Xamarin.IsSimBuild;
             Assert.IsTrue(isSlnPathCorrect && isSimBuildCorrect);
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
 
         #endregion
-        private async Task<McBuild> GetSampleBuild(McApp app, McBranchStatus branchStatus)
+        private async Task<McBuild> GetSampleBuild(McBranchStatus branchStatus)
         {
-
-            return await Client.BuildService.CreateBranchBuildAsync(app.Owner.Name, app.Name,
-                branchStatus.Branch.Name, new McBuildParams()
+            return await branchStatus.Branch.CreateBuildAsync(
+                new McBuildParams()
                 {
                     IsDebug = false,
                     SourceVersion = ""
@@ -92,20 +91,15 @@ namespace MobileCenterSdk.Test
         }
         private async Task<McBranchStatus> GetConfiguredSampleBranchAsync(McApp app)
         {
-            await Client.BuildService.ConfigureRepoForBuild(app.Owner.Name, app.Name, TestConfig.Repository);
-            var branch = (await GetBranchesAsync(app)).First();
-            var configInfo = await GetToolsetProjectsAsync(app, branch);
-            await Client.BuildService.ConfigureBranchAsync(app.Owner.Name, app.Name, branch.Branch.Name, SampleToolsetProjectConfig(configInfo));
-            return branch;
-        }
-        private async Task<List<McBranchStatus>> GetBranchesAsync(McApp app)
-        {
-            return await Client.BuildService.GetBranchesAsync(app.Owner.Name, app.Name);
+            await app.ConfigureRespository(TestConfig.Repository);
+            var branchStatus = (await app.GetBranchesAsync()).First();
+            var configInfo = await GetToolsetProjectsAsync(app, branchStatus);
+            await branchStatus.Branch.ConfigureForBuildAsync(SampleToolsetProjectConfig(configInfo));
+            return branchStatus;
         }
         private async Task<McToolsetProjects> GetToolsetProjectsAsync(McApp app, McBranchStatus branchStatus)
         {
-            //configure branch before
-            return await Client.BuildService.GetProjectsInRepoForBranchAsync(app.Owner.Name, app.Name, branchStatus.Branch.Name, app.PlatformType, app.OsType);
+            return await branchStatus.Branch.GetProjectsAsync(app.OsType, app.PlatformType);
         }
         private McToolsetProjectConfiguration SampleToolsetProjectConfig(McToolsetProjects toolsetProjects)
         {

@@ -14,33 +14,33 @@ namespace MobileCenterSdk.Utils
         private const string Logs = "logs";
         private const string TestReportPreview = "test-report-preview";
 
-        public static DownloadType Convert(string downloadTypeString)
+        public static McDownloadType Convert(string downloadTypeString)
         {
             switch(downloadTypeString)
             {
                 case Build:
-                    return DownloadType.Build;
+                    return McDownloadType.Build;
                 case Symbols:
-                    return DownloadType.Symbols;
+                    return McDownloadType.Symbols;
                 case Logs:
-                    return DownloadType.Logs;
+                    return McDownloadType.Logs;
                 case TestReportPreview:
-                    return DownloadType.TestReportPreview;
+                    return McDownloadType.TestReportPreview;
                 default:
-                    return DownloadType.Unknown;
+                    return McDownloadType.Unknown;
             }
         }
-        public static string ConvertBack(DownloadType downloadType)
+        public static string ConvertBack(McDownloadType downloadType)
         {
             switch(downloadType)
             {
-                case DownloadType.Build:
+                case McDownloadType.Build:
                     return Build;
-                case DownloadType.Symbols:
+                case McDownloadType.Symbols:
                     return Symbols;
-                case DownloadType.Logs:
+                case McDownloadType.Logs:
                     return Logs;
-                case DownloadType.TestReportPreview:
+                case McDownloadType.TestReportPreview:
                     return TestReportPreview;
                 default:
                     return string.Empty;

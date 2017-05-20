@@ -16,41 +16,41 @@ namespace MobileCenterSdk.Utils
         private const string Windows = "Windows";
         private const string Custom = "Custom";
 
-        public static AppOs Convert(string osString)
+        public static McAppOs Convert(string osString)
         {
             switch (osString)
             {
                 case Android:
-                    return AppOs.Android;
+                    return McAppOs.Android;
                 case IOs:
-                    return AppOs.IOs;
+                    return McAppOs.IOs;
                 case MacOs:
-                    return AppOs.MacOs;
+                    return McAppOs.MacOs;
                 case Tizen:
-                    return AppOs.Tizen;
+                    return McAppOs.Tizen;
                 case Windows:
-                    return AppOs.Windows;
+                    return McAppOs.Windows;
                 case Custom:
-                    return AppOs.Custom;
+                    return McAppOs.Custom;
                 default:
-                    return AppOs.Unknown;
+                    return McAppOs.Unknown;
             }
         }
-        public static string ConvertBack(AppOs os)
+        public static string ConvertBack(McAppOs os)
         {
             switch(os)
             {
-                case AppOs.Android:
+                case McAppOs.Android:
                     return Android;
-                case AppOs.IOs:
+                case McAppOs.IOs:
                     return IOs;
-                case AppOs.MacOs:
+                case McAppOs.MacOs:
                     return MacOs;
-                case AppOs.Tizen:
+                case McAppOs.Tizen:
                     return Tizen;
-                case AppOs.Windows:
+                case McAppOs.Windows:
                     return Windows;
-                case AppOs.Custom:
+                case McAppOs.Custom:
                     return Custom;
                 default:
                     return string.Empty;

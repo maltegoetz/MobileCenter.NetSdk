@@ -20,7 +20,7 @@ namespace MobileCenterSdk.Test
             Assert.IsTrue(PropertiesSetCheck.Check(await GetAppsAsync()));
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetSingleApp_AllPropertiesSet_ShouldBeTrue()
@@ -31,7 +31,7 @@ namespace MobileCenterSdk.Test
             Assert.IsTrue(PropertiesSetCheck.Check(app));
 
             //cleanup
-            await Client.AccountService.DeleteAppAsync(newapp.Owner.Name, newapp.Name);
+            await newapp.DeleteAsync();
         }
         [TestMethod]
         public async Task CreateApp_AllPropertiesSet_ShouldBeTrue()
@@ -39,7 +39,7 @@ namespace MobileCenterSdk.Test
             var app = await CreateRandomApp();
             Assert.IsTrue(PropertiesSetCheck.Check(app));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
 
         }
 
@@ -47,15 +47,14 @@ namespace MobileCenterSdk.Test
         public async Task DeleteApp_Successful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
-            
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task UpdateApp_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var guid = Guid.NewGuid();
-            var newapp = await Client.AccountService.UpdateAppAsync(app.Owner.Name, app.Name, new McAppBase()
+            var newapp = await app.UpdateAsync(new McAppBase()
             {
                 DisplayName = $"UnitTest-{guid}",
                 Name = $"UnitTest-{guid}",
@@ -63,7 +62,7 @@ namespace MobileCenterSdk.Test
             });
             Assert.IsTrue(PropertiesSetCheck.Check(newapp));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(newapp.Owner.Name, newapp.Name);
+            await app.DeleteAsync();
 
         }
         #endregion
@@ -76,31 +75,31 @@ namespace MobileCenterSdk.Test
 
             Assert.IsTrue(PropertiesSetCheck.Check(dg));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetDistributionGroups_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            var dgs = await Client.AccountService.GetDistributionGroups(app.Owner.Name, app.Name);
+            var dgs = await app.GetDistributionGroupsAsync();
             if (dgs.Count < 1)
                 Assert.Fail();
             Assert.IsTrue(PropertiesSetCheck.Check(dgs));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetSingleDistributionGroup_PropertiesAreEqual_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            var singleDg = await Client.AccountService.GetDistributionGroup(app.Owner.Name, app.Name, dg.Name);
+            var singleDg = await app.GetDistributionGroupByNameAsync(dg.Name);
 
             Assert.IsTrue(dg.Id.Equals(singleDg.Id) && dg.Name.Equals(singleDg.Name) &&
                 dg.Origin.Equals(singleDg.Origin) && dg.OriginType.Equals(singleDg.OriginType));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task UpdateDistributionGroup_PropertiesAreEqual_ShouldBeTrue()
@@ -108,30 +107,28 @@ namespace MobileCenterSdk.Test
             var updatedName = "UpdatedDG";
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            var newDg = await Client.AccountService.UpdateDistributionGroup(app.Owner.Name, app.Name, dg.Name, new McDistributionGroupBase() {
-                Name = updatedName
-            });
+            var newDg = await dg.UpdateAsync(updatedName);
             
             Assert.IsTrue(dg.Id.Equals(newDg.Id) && newDg.Name.Equals(updatedName) &&
                 dg.Origin.Equals(newDg.Origin) && dg.OriginType.Equals(newDg.OriginType));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task DeleteDistributionGroup_Successful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            await Client.AccountService.DeleteDistributionGroup(app.Owner.Name, app.Name, dg.Name);
+            await dg.DeleteAsync();
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task AddDistributionGroupMembers_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            var invites = await Client.AccountService.AddDistributionGroupMembers(app.Owner.Name, app.Name, dg.Name, new McUsersWithEmailList()
+            var invites = await dg.InviteMembersAsync(new McUsersWithEmailList()
             {
                 Emails = new List<string>(){
                     TestConfig.SecondUserEmailAdress
@@ -141,24 +138,23 @@ namespace MobileCenterSdk.Test
                 Assert.Fail();
             Assert.IsTrue(PropertiesSetCheck.Check(invites));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
-
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetDistributionGroupMembers_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
             var dg = await CreateRandomDistributionGroup(app);
-            var invites = await Client.AccountService.AddDistributionGroupMembers(app.Owner.Name, app.Name, dg.Name, new McUsersWithEmailList()
+            var invites = await dg.InviteMembersAsync(new McUsersWithEmailList()
             {
                 Emails = new List<string>(){
                     TestConfig.SecondUserEmailAdress
                 }
             });
-            var members = await Client.AccountService.GetDistributionGroupMembers(app.Owner.Name, app.Name, dg.Name);
+            var members = await dg.GetMembersAsync();
             Assert.IsTrue(PropertiesSetCheck.Check(members));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
 
         [TestMethod]
@@ -172,13 +168,13 @@ namespace MobileCenterSdk.Test
                     TestConfig.SecondUserEmailAdress
                 }
             };
-            var invites = await Client.AccountService.AddDistributionGroupMembers(app.Owner.Name, app.Name, dg.Name, users);
-            var delmembers = await Client.AccountService.RemoveDistributionGroupMembers(app.Owner.Name, app.Name, dg.Name, users);
+            var invites = await dg.InviteMembersAsync(users);
+            var delmembers = await dg.DeleteMembersAsync(users);
             if (delmembers.Count < 1)
                 Assert.Fail();
             Assert.IsTrue(PropertiesSetCheck.Check(delmembers));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
 
         }
         #endregion
@@ -187,45 +183,48 @@ namespace MobileCenterSdk.Test
         public async Task InviteUserToApp_IsSuccessful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            await Client.AccountService.InviteUserToApp(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress);
+            await app.InviteUserAsync(TestConfig.SecondUserEmailAdress);
             
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetAppInvitations_AllPropertiesSet_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            await Client.AccountService.InviteUserToApp(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress);
-            var invitations = await Client.AccountService.GetAppInvitations(app.Owner.Name, app.Name);
+            await app.InviteUserAsync(TestConfig.SecondUserEmailAdress);
+            var invitations = await app.GetPendingInvitationsAsync();
             if (invitations.Count < 1 || invitations[0].Email != TestConfig.SecondUserEmailAdress)
                 Assert.Fail();
 
             Assert.IsTrue(PropertiesSetCheck.Check(invitations));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task UpdateAppInvitation_IsSuccessful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            await Client.AccountService.InviteUserToApp(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress);
+            await app.InviteUserAsync(TestConfig.SecondUserEmailAdress);
             var permissions = new McPermissionData()
             {
                 Permissions = new List<string>() { "manager" }
             };
-            await Client.AccountService.UpdateAppInvitationPermissions(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress, permissions);
+            var invitations = await app.GetPendingInvitationsAsync();
+            var invite = invitations.Single(i => i.Email == TestConfig.SecondUserEmailAdress);
+            await invite.UpdateAsync(permissions);
             
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task DeleteAppInvitation_IsSuccessful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            await Client.AccountService.InviteUserToApp(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress);
-
-            await Client.AccountService.DeleteAppInvitation(app.Owner.Name, app.Name, TestConfig.SecondUserEmailAdress);
+            await app.InviteUserAsync(TestConfig.SecondUserEmailAdress);
+            var invitations = await app.GetPendingInvitationsAsync();
+            var invite = invitations.Single(i => i.Email == TestConfig.SecondUserEmailAdress);
+            await invite.DeleteAsync();
 
             //cleanup
             await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
@@ -234,25 +233,25 @@ namespace MobileCenterSdk.Test
         public async Task GetAppTesters_IsSuccessful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            var testers = await Client.AccountService.GetAppTesters(app.Owner.Name, app.Name);
+            var testers = await app.GetTestersAsync();
 
             if (testers.Count < 1) //the owner can not be removed
                 Assert.Fail();
             Assert.IsTrue(PropertiesSetCheck.Check(testers));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public async Task GetAppUsers_IsSuccessful_ShouldBeTrue()
         {
             var app = await CreateRandomApp();
-            var users = await Client.AccountService.GetAppUsers(app.Owner.Name, app.Name);
+            var users = await app.GetUsersAsync();
 
             if (users.Count < 1) //the owner can not be removed
                 Assert.Fail();
             Assert.IsTrue(PropertiesSetCheck.Check(users));
             //cleanup
-            await Client.AccountService.DeleteAppAsync(app.Owner.Name, app.Name);
+            await app.DeleteAsync();
         }
         [TestMethod]
         public void UpdateAppUser_IsSuccessful_ShouldBeTrue()
@@ -273,7 +272,7 @@ namespace MobileCenterSdk.Test
         private async Task<McDistributionGroup> CreateRandomDistributionGroup(McApp app)
         {
             var guid = Guid.NewGuid();
-            return await Client.AccountService.CreateDistributionGroup(app.Owner.Name, app.Name, $"UnitTestDG-{guid}");
+            return await app.CreateDistributionGroupAsync($"UnitTestDG-{guid}");
         }
         #endregion
     }

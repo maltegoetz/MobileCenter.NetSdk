@@ -30,7 +30,7 @@ namespace MobileCenterSdk.Models
         public string Origin { get; set; }
 
         [JsonIgnore]
-        public Origin OriginType
+        public McOrigin OriginType
         {
             get
             {

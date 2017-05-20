@@ -175,8 +175,8 @@ namespace MobileCenterSdk.Test
                 Description = "UnitTest test app",
                 DisplayName = $"UnitTest-{guid}",
                 Name = $"UnitTest-{guid}",
-                OsType = AppOs.IOs,
-                PlatformType = AppPlatform.ObjectiveCSwift
+                OsType = McAppOs.IOs,
+                PlatformType = McAppPlatform.ObjectiveCSwift
             });
         }
         #endregion

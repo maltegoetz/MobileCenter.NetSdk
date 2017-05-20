@@ -14,7 +14,7 @@ namespace MobileCenterSdk.Utils
         private const string User = "user";
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(OwnerType);
+            return objectType == typeof(McOwnerType);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -23,23 +23,23 @@ namespace MobileCenterSdk.Utils
             switch(ownerstring)
             {
                 case Organization:
-                    return OwnerType.Organization;
+                    return McOwnerType.Organization;
                 case User:
-                    return OwnerType.User;
+                    return McOwnerType.User;
                 default:
-                    return OwnerType.User;
+                    return McOwnerType.User;
             }
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             string output = string.Empty;
-            switch((OwnerType) value)
+            switch((McOwnerType) value)
             {
-                case OwnerType.Organization:
+                case McOwnerType.Organization:
                     output = Organization;
                     break;
-                case OwnerType.User:
+                case McOwnerType.User:
                     output = User;
                     break;
             }

@@ -18,45 +18,45 @@ namespace MobileCenterSdk.Utils
         private const string Xamarin = "Xamarin";
         private const string Unknown = "Unknown";
 
-        public static AppPlatform Convert(string platformString)
+        public static McAppPlatform Convert(string platformString)
         {
             switch (platformString)
             {
                 case Cordova:
-                    return AppPlatform.Cordova;
+                    return McAppPlatform.Cordova;
                 case Java:
-                    return AppPlatform.Java;
+                    return McAppPlatform.Java;
                 case ObjectiveCSwift:
-                    return AppPlatform.ObjectiveCSwift;
+                    return McAppPlatform.ObjectiveCSwift;
                 case ReactNative:
-                    return AppPlatform.ReactNative;
+                    return McAppPlatform.ReactNative;
                 case Unity:
-                    return AppPlatform.Unity;
+                    return McAppPlatform.Unity;
                 case UWP:
-                    return AppPlatform.UWP;
+                    return McAppPlatform.UWP;
                 case Xamarin:
-                    return AppPlatform.Xamarin;
+                    return McAppPlatform.Xamarin;
                 default:
-                    return AppPlatform.Unknown;
+                    return McAppPlatform.Unknown;
             }
         }
-        public static string ConvertBack(AppPlatform platform)
+        public static string ConvertBack(McAppPlatform platform)
         {
             switch(platform)
             {
-                case AppPlatform.Cordova:
+                case McAppPlatform.Cordova:
                     return Cordova;
-                case AppPlatform.Java:
+                case McAppPlatform.Java:
                     return Java;
-                case AppPlatform.ObjectiveCSwift:
+                case McAppPlatform.ObjectiveCSwift:
                     return ObjectiveCSwift;
-                case AppPlatform.ReactNative:
+                case McAppPlatform.ReactNative:
                     return ReactNative;
-                case AppPlatform.Unity:
+                case McAppPlatform.Unity:
                     return Unity;
-                case AppPlatform.UWP:
+                case McAppPlatform.UWP:
                     return UWP;
-                case AppPlatform.Xamarin:
+                case McAppPlatform.Xamarin:
                     return Xamarin;
                 default:
                     return Unknown;

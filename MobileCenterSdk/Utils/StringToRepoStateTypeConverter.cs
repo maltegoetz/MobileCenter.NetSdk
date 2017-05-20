@@ -12,29 +12,29 @@ namespace MobileCenterSdk.Utils
         private const string Unauthorized = "unauthorized";
         private const string Inactive = "inactive";
         private const string Active = "active";
-        public static RepoState Convert(string repoStateString)
+        public static McRepoState Convert(string repoStateString)
         {
             switch(repoStateString)
             {
                 case Unauthorized:
-                    return RepoState.Unauthorized;
+                    return McRepoState.Unauthorized;
                 case Inactive:
-                    return RepoState.Inactive;
+                    return McRepoState.Inactive;
                 case Active:
-                    return RepoState.Active;
+                    return McRepoState.Active;
                 default:
-                    return RepoState.Unknown;
+                    return McRepoState.Unknown;
             }
         }
-        public static string ConvertBack(RepoState repoState)
+        public static string ConvertBack(McRepoState repoState)
         {
             switch(repoState)
             {
-                case RepoState.Unauthorized:
+                case McRepoState.Unauthorized:
                     return Unauthorized;
-                case RepoState.Inactive:
+                case McRepoState.Inactive:
                     return Inactive;
-                case RepoState.Active:
+                case McRepoState.Active:
                     return Active;
                 default:
                     return string.Empty;

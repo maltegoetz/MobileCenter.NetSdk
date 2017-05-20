@@ -11,25 +11,25 @@ namespace MobileCenterSdk.Utils
     {
         private const string MobileCenter = "mobile-center";
         private const string HockeyApp = "hockeyapp";
-        public static Origin Convert(string originString)
+        public static McOrigin Convert(string originString)
         {
             switch (originString.ToLower())
             {
                 case MobileCenter:
-                    return Origin.MobileCenter;
+                    return McOrigin.MobileCenter;
                 case HockeyApp:
-                    return Origin.HockeyApp;
+                    return McOrigin.HockeyApp;
                 default:
-                    return Origin.Unknown;
+                    return McOrigin.Unknown;
             }
         }
-        public static string ConvertBack(Origin origin)
+        public static string ConvertBack(McOrigin origin)
         {
             switch(origin)
             {
-                case Origin.MobileCenter:
+                case McOrigin.MobileCenter:
                     return MobileCenter;
-                case Origin.HockeyApp:
+                case McOrigin.HockeyApp:
                     return HockeyApp;
                 default:
                     return string.Empty;

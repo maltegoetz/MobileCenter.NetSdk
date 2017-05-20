@@ -21,5 +21,9 @@ namespace MobileCenterSdk.Models
         [JsonProperty(PropertyName = "message")]
         public string Message { get; set; }
     }
-
+    public class McMessage
+    {
+        [JsonProperty(PropertyName = "message")]
+        public string Content { get; set; }
+    }
 }

@@ -19,7 +19,7 @@ namespace MobileCenterSdk.Test
                 return _client ?? (_client = new MobileCenterSdkClient(TestConfig.ApiKey));
             }
         }
-        public async Task<McApp> CreateRandomApp(AppOs os = AppOs.Android, AppPlatform platform = AppPlatform.Java)
+        public async Task<McApp> CreateRandomApp(McAppOs os = McAppOs.Android, McAppPlatform platform = McAppPlatform.Java)
         {
             var guid = Guid.NewGuid();
             return await Client.AccountService.CreateAppAsync(new McAppSlim()

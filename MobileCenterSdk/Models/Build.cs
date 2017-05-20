@@ -1,14 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using MobileCenterSdk.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MobileCenterSdk.Models
 {
-    public class McBuild
+    public class McBuild : IBuildServiceHolder, IAppDataHolder
     {
+        BuildService IBuildServiceHolder.BuildService { get; set; }
+
+        string IAppDataHolder.AppName { get; set; }
+        string IAppDataHolder.AppOwnerName { get; set; }
+
+        internal McBuild() { }
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
@@ -44,6 +52,27 @@ namespace MobileCenterSdk.Models
 
         [JsonProperty(PropertyName = "tags")]
         public List<string> Tags { get; set; }
+
+        public async Task<McBuild> CancelAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (this as IBuildServiceHolder).BuildService.CancelBuildAsync(DataHolder().AppOwnerName, DataHolder().AppName, Id.ToString(), cancellationToken);
+        }
+        public async Task<McDistributionResponse> DistributeAsync(McDistributionInformation distributionInfo, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (this as IBuildServiceHolder).BuildService.DistributeBuildAsync(DataHolder().AppOwnerName, DataHolder().AppName, Id.ToString(), distributionInfo, cancellationToken);
+        }
+        public async Task<McDownloadContainer> GetDownloadInformationAsync(McDownloadType downloadType, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (this as IBuildServiceHolder).BuildService.GetBuildDownloadInformationAsync(DataHolder().AppOwnerName, DataHolder().AppName, Id.ToString(), downloadType, cancellationToken);
+        }
+        public async Task<McBuildLog> GetLogAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            return await (this as IBuildServiceHolder).BuildService.GetBuildLogsAsync(DataHolder().AppOwnerName, DataHolder().AppName, Id.ToString(), cancellationToken);
+        }
+        private IAppDataHolder DataHolder()
+        {
+            return this as IAppDataHolder;
+        }
     }
     public class McBuildParams
     {
@@ -97,7 +126,7 @@ namespace MobileCenterSdk.Models
         public List<string> Value;
     }
 
-    public enum DownloadType
+    public enum McDownloadType
     {
         Build,
         Symbols,

@@ -116,7 +116,7 @@ namespace MobileCenterSdk.Test.Utils
             var isNameSet = !string.IsNullOrWhiteSpace(org.Name);
             var isCollabRoleSet = !string.IsNullOrWhiteSpace(org.CollaboratorRole);
             var isOriginSet = !string.IsNullOrWhiteSpace(org.Origin);
-            var isOriginTypeSet = org.OriginType != Origin.Unknown;
+            var isOriginTypeSet = org.OriginType != McOrigin.Unknown;
             var isIdSet = !string.IsNullOrWhiteSpace(org.Id);
             return (isDisplayNameSet && isNameSet && isCollabRoleSet && isOriginSet &&
                 isOriginTypeSet && isIdSet);
@@ -139,12 +139,12 @@ namespace MobileCenterSdk.Test.Utils
             var isDisplayNameSet = !string.IsNullOrWhiteSpace(app.DisplayName);
             var isNameSet = !string.IsNullOrWhiteSpace(app.Name);
             var isOsSet = !string.IsNullOrWhiteSpace(app.Os);
-            var isOsTypeSet = app.OsType != AppOs.Unknown;
+            var isOsTypeSet = app.OsType != McAppOs.Unknown;
             var isOwnerSet = Check(app.Owner);
             var isPlatformSet = !string.IsNullOrWhiteSpace(app.Platform);
-            var isPlatformTypeSet = app.PlatformType != AppPlatform.Unknown;
+            var isPlatformTypeSet = app.PlatformType != McAppPlatform.Unknown;
             var isOriginSet = !string.IsNullOrWhiteSpace(app.Origin);
-            var isOriginTypeSet = app.OriginType != Origin.Unknown;
+            var isOriginTypeSet = app.OriginType != McOrigin.Unknown;
             return (isIdSet && isAppSecretSet && isDisplayNameSet && isNameSet && isOsSet && isOwnerSet && isPlatformSet && isPlatformTypeSet && isOriginSet && isOriginTypeSet);
         }
 
@@ -161,7 +161,7 @@ namespace MobileCenterSdk.Test.Utils
             var isIdSet = !string.IsNullOrWhiteSpace(dg.Id);
             var isNameSet = !string.IsNullOrWhiteSpace(dg.Name);
             var isOriginSet = !string.IsNullOrWhiteSpace(dg.Origin);
-            var isOriginTypeSet = dg.OriginType != Origin.Unknown;
+            var isOriginTypeSet = dg.OriginType != McOrigin.Unknown;
             return (isIdSet && isNameSet && isOriginSet && isOriginTypeSet);
         }
 
@@ -265,6 +265,16 @@ namespace MobileCenterSdk.Test.Utils
         }
 
         public static bool Check(List<McUser> users)
+        {
+            foreach (var user in users)
+            {
+                if (!Check(user))
+                    return false;
+            }
+            return true;
+        }
+
+        internal static bool Check(List<McAppUser> users)
         {
             foreach (var user in users)
             {

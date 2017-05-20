@@ -55,6 +55,7 @@ namespace MobileCenterSdk.Services
         public static string AppTestersEndpoint { get; set; } = AppEndpoint + "/testers";
         public static string AppUsersEndpoint { get; set; } = AppEndpoint + "/users";
         public static string AppUserEndpoint { get; set; } = AppUserEndpoint + "/{2}";
+        public static string AppTransferEndpoint { get; set; } = AppEndpoint + "/transfer/{2}";
 
         public static string AppBranchesEndpoint { get; set; } = AppEndpoint + "/branches";
         public static string AppBranchEndpoint { get; set; } = AppBranchesEndpoint + "/{2}";
