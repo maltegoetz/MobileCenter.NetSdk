@@ -10,6 +10,7 @@ namespace MobileCenterSdk.Models
     {
         MobileCenter,
         HockeyApp,
+        CodePush,
         Unknown
     }
 }

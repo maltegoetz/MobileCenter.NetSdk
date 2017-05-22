@@ -11,6 +11,7 @@ namespace MobileCenterSdk.Utils
     {
         private const string MobileCenter = "mobile-center";
         private const string HockeyApp = "hockeyapp";
+        private const string CodePush = "codepush";
         public static McOrigin Convert(string originString)
         {
             switch (originString.ToLower())
@@ -19,6 +20,8 @@ namespace MobileCenterSdk.Utils
                     return McOrigin.MobileCenter;
                 case HockeyApp:
                     return McOrigin.HockeyApp;
+                case CodePush:
+                    return McOrigin.CodePush;
                 default:
                     return McOrigin.Unknown;
             }
@@ -31,6 +34,8 @@ namespace MobileCenterSdk.Utils
                     return MobileCenter;
                 case McOrigin.HockeyApp:
                     return HockeyApp;
+                case McOrigin.CodePush:
+                    return CodePush;
                 default:
                     return string.Empty;
             }
