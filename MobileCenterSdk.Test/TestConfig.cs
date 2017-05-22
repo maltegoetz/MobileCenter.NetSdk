@@ -12,7 +12,7 @@ namespace MobileCenterSdk.Test
         public const string ApiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXX";
         public const string SecondUserEmailAdress = "xyz@xyz.com";
         public const string Repository = "https://github.com/username/repo.git";
-        public const AppOs AppOsOfRepo = AppOs.Android;
-        public const AppPlatform AppPlatformOfRepo = AppPlatform.Xamarin;
+        public const McAppOs AppOsOfRepo = McAppOs.Android;
+        public const McAppPlatform AppPlatformOfRepo = McAppPlatform.Xamarin;
     }
 }
