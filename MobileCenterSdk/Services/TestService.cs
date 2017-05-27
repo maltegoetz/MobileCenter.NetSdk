@@ -9,7 +9,7 @@ namespace MobileCenterSdk.Services
 {
     public class TestService : ServiceBase
     {
-        public TestService(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc) : base(credentials, mcsc){}
+        public TestService(MobileCenterSdkClient mcsc) : base(mcsc){}
 
     }
 }

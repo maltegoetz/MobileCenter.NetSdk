@@ -12,8 +12,6 @@ namespace MobileCenterSdk
     {
         private AccountService _accountService;
         private BuildService _buildService;
-        private string _username;
-        private string _password;
 
         public MobileCenterCredentials Credentials { get; set; }
 
@@ -23,11 +21,11 @@ namespace MobileCenterSdk
         }
         public AccountService AccountService
         {
-            get { return _accountService ?? (_accountService = new AccountService(Credentials, this)); }
+            get { return _accountService ?? (_accountService = new AccountService(this)); }
         }
         public BuildService BuildService
         {
-            get { return _buildService ?? (_buildService = new BuildService(Credentials, this)); }
+            get { return _buildService ?? (_buildService = new BuildService(this)); }
         }
     }
 }

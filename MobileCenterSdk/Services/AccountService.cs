@@ -12,7 +12,7 @@ namespace MobileCenterSdk.Services
 {
     public class AccountService : ServiceBase
     {
-        public AccountService(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc) : base(credentials, mcsc){}
+        public AccountService(MobileCenterSdkClient mcsc) : base(mcsc){}
         #region User
         /// <summary>
         /// Get the user profile data for the authenticated user as an <see cref="McUser"/> object asynchronously.

@@ -14,14 +14,10 @@ namespace MobileCenterSdk.Services
 {
     public abstract class ServiceBase
     {
-        protected MobileCenterCredentials _credentials;
         MobileCenterSdkClient _mcsc;
-        private string _username;
-        private string _password;
 
-        protected ServiceBase(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc)
+        protected ServiceBase(MobileCenterSdkClient mcsc)
         {
-            _credentials = credentials;
             _mcsc = mcsc;
         }
 
@@ -52,7 +48,7 @@ namespace MobileCenterSdk.Services
             {
                 request.Content = new StringContent("", Encoding.UTF8, "application/json");
             }
-            var authHeader = _credentials.AuthHeader();
+            var authHeader = _mcsc.Credentials.AuthHeader();
             request.Headers.Add(authHeader.Key, authHeader.Value);
 
             return request;
