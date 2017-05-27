@@ -1,4 +1,5 @@
 ﻿using MobileCenterSdk.Services;
+using MobileCenterSdk.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,22 @@ namespace MobileCenterSdk
     {
         private AccountService _accountService;
         private BuildService _buildService;
-        private string _apiKey;
+        private string _username;
+        private string _password;
 
-        public MobileCenterSdkClient(string apiKey)
+        public MobileCenterCredentials Credentials { get; set; }
+
+        public MobileCenterSdkClient(MobileCenterCredentials credentials)
         {
-            _apiKey = apiKey;
+            Credentials = credentials;
         }
         public AccountService AccountService
         {
-            get { return _accountService ?? (_accountService = new AccountService(_apiKey, this)); }
+            get { return _accountService ?? (_accountService = new AccountService(Credentials, this)); }
         }
         public BuildService BuildService
         {
-            get { return _buildService ?? (_buildService = new BuildService(_apiKey, this)); }
+            get { return _buildService ?? (_buildService = new BuildService(Credentials, this)); }
         }
     }
 }

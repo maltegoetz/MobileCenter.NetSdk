@@ -10,6 +10,8 @@ namespace MobileCenterSdk.Test
     public static class TestConfig
     {
         public const string ApiKey = "XXXXXXXXXXXXXXXXXXXXXXXXXXX";
+        public const string ApiUsername = "xxxxxxxxxxx";
+        public const string ApiPassword = "xxxxxxxxxxxxxxxxxxxxxxxxx";
         public const string SecondUserEmailAdress = "xyz@xyz.com";
         public const string Repository = "https://github.com/username/repo.git";
         public const McAppOs AppOsOfRepo = McAppOs.Android;

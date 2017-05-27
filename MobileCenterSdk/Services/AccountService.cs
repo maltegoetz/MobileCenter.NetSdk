@@ -1,4 +1,5 @@
 ﻿using MobileCenterSdk.Models;
+using MobileCenterSdk.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace MobileCenterSdk.Services
 {
     public class AccountService : ServiceBase
     {
-        public AccountService(string apiKey, MobileCenterSdkClient mcsc) : base(apiKey, mcsc){}
+        public AccountService(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc) : base(credentials, mcsc){}
         #region User
         /// <summary>
         /// Get the user profile data for the authenticated user as an <see cref="McUser"/> object asynchronously.

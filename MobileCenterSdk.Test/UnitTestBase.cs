@@ -11,12 +11,20 @@ namespace MobileCenterSdk.Test
     public abstract class UnitTestBase
     {
         private MobileCenterSdkClient _client;
+        private MobileCenterSdkClient _basicAuthClient;
 
         public MobileCenterSdkClient Client
         {
             get
             {
-                return _client ?? (_client = new MobileCenterSdkClient(TestConfig.ApiKey));
+                return _client ?? (_client = new MobileCenterSdkClient(new MobileCenterCredentials(TestConfig.ApiKey)));
+            }
+        }
+        public MobileCenterSdkClient BasicAuthClient
+        {
+            get
+            {
+                return _basicAuthClient ?? (_basicAuthClient = new MobileCenterSdkClient(new MobileCenterCredentials(TestConfig.ApiUsername, TestConfig.ApiPassword)));
             }
         }
         public async Task<McApp> CreateRandomApp(McAppOs os = McAppOs.Android, McAppPlatform platform = McAppPlatform.Java)

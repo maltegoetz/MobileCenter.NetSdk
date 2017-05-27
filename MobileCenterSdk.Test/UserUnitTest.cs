@@ -63,7 +63,7 @@ namespace MobileCenterSdk.Test
         [TestMethod]
         public async Task GetApiTokens_AllPropertiesSet_ShouldBeTrue()
         {
-            var tokens = await Client.AccountService.GetApiTokensAsync();
+            var tokens = await BasicAuthClient.AccountService.GetApiTokensAsync();
             //The result must contain the token we are testing with
             if (tokens.Count < 1)
                 Assert.Fail();
@@ -72,7 +72,7 @@ namespace MobileCenterSdk.Test
         [TestMethod]
         public async Task CreateApiToken_AllPropertiesSet_ShouldBeTrue()
         {
-            var token = await Client.AccountService.CreateApiTokenAsync(
+            var token = await BasicAuthClient.AccountService.CreateApiTokenAsync(
                 new McApiTokenInformation() {
                     Description = "TokenCeatedByUnitTest",
                     Scope = new List<string>() { "all" }
@@ -85,7 +85,7 @@ namespace MobileCenterSdk.Test
         [TestMethod]
         public async Task DeleteApiToken_IsSuccessful_ShouldBeTrue()
         {
-            var token = await Client.AccountService.CreateApiTokenAsync(
+            var token = await BasicAuthClient.AccountService.CreateApiTokenAsync(
                 new McApiTokenInformation()
                 {
                     Description = "TokenCeatedByUnitTest",

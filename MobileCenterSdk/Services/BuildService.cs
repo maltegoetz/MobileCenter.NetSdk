@@ -12,7 +12,7 @@ namespace MobileCenterSdk.Services
 {
     public class BuildService : ServiceBase
     {
-        public BuildService(string apiKey, MobileCenterSdkClient mcsc) : base(apiKey, mcsc) { }
+        public BuildService(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc) : base(credentials, mcsc) { }
         public async Task<List<McBranchStatus>> GetBranchesAsync(string ownerName, string appName, CancellationToken cancellationToken = default(CancellationToken))
         {
             var request = PrepareHttpRequest(

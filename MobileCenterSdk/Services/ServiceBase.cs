@@ -14,12 +14,14 @@ namespace MobileCenterSdk.Services
 {
     public abstract class ServiceBase
     {
-        protected string _apiKey;
-        MobileCenterSdkClient _mcsc;  
+        protected MobileCenterCredentials _credentials;
+        MobileCenterSdkClient _mcsc;
+        private string _username;
+        private string _password;
 
-        protected ServiceBase(string apiKey, MobileCenterSdkClient mcsc)
+        protected ServiceBase(MobileCenterCredentials credentials, MobileCenterSdkClient mcsc)
         {
-            _apiKey = apiKey;
+            _credentials = credentials;
             _mcsc = mcsc;
         }
 
@@ -28,7 +30,7 @@ namespace MobileCenterSdk.Services
             return new HttpClient();
         }
         
-        protected virtual HttpRequestMessage PrepareHttpRequest(string endpoint, HttpMethod method, List<KeyValuePair<string, string>> queryParameters = null, object body = null)
+        protected virtual HttpRequestMessage PrepareHttpRequest(string endpoint, HttpMethod method, List<KeyValuePair<string, string>> queryParameters = null, object body = null, string basicAuthUsername = "", string basicAuthPassword = "")
         {
             var url = $"{ApiSettings.ApiBaseUrl}/{endpoint}";
             if (queryParameters != null && queryParameters.Count > 0)
@@ -50,7 +52,8 @@ namespace MobileCenterSdk.Services
             {
                 request.Content = new StringContent("", Encoding.UTF8, "application/json");
             }
-            request.Headers.Add("X-API-Token", _apiKey);
+            var authHeader = _credentials.AuthHeader();
+            request.Headers.Add(authHeader.Key, authHeader.Value);
 
             return request;
         }
