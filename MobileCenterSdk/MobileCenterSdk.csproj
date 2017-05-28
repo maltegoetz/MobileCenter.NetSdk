@@ -53,6 +53,7 @@
     <Compile Include="Models\PermissionData.cs" />
     <Compile Include="Models\Repository.cs" />
     <Compile Include="Models\Status.cs" />
+    <Compile Include="Models\TestRun.cs" />
     <Compile Include="Models\ToolsetProjects.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

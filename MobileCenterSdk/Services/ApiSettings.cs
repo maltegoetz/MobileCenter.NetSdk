@@ -72,5 +72,14 @@ namespace MobileCenterSdk.Services
         public static string AppSourceHostsEndpoint { get; set; } = AppEndpoint + "/{2}/repositories";
         public static string AppXcodeVersionEndpoint { get; set; } = AppEndpoint + "/xcode_versions";
         #endregion
+
+        #region Test Endpoints
+        public static string TestRunsEndpoint { get; set; } = AppEndpoint + "/test_runs";
+        public static string TestRunEndpoint { get; set; } = TestRunsEndpoint + "/{2}";
+        public static string TestRunStateEndpoint { get; set; } = TestRunEndpoint + "/state";
+        public static string TestSeriesEndpoint { get; set; } = AppEndpoint + "/test_series";
+        public static string SingleTestSeriesEndpoint { get; set; } = TestSeriesEndpoint + "/{2}";
+        public static string TestSeriesTestRunsEndpoint { get; set; } = SingleTestSeriesEndpoint + "/test_runs";
+        #endregion
     }
 }
